@@ -23,7 +23,9 @@
     "http-link-header": "^1.0.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "tree-sitter": "^0.25.0",
+    "tree-sitter-devicetree": "^0.15.0"
   },
   "devDependencies": {
     "eslint": "^8.14.0",
