@@ -19,7 +19,8 @@ function init (app) {
     })
   }
 
-  childProcess.execFile('npm', ['start'], opts, err => {
+  const child = childProcess.spawn('npm', ['start'], { ...opts, shell: true, stdio: 'inherit' })
+  child.on('error', err => {
     console.error(err)
     console.error('Application serving failed')
     process.exit(1)

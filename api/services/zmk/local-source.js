@@ -1,10 +1,20 @@
 const childProcess = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const { parseKeymap } = require('./keymap')
+const { parseKeymap: parseKeymapJson, parseKeyBinding } = require('./keymap')
+const { parseKeymapFile } = require('./dts-parser')
 
-const ZMK_PATH = path.join(__dirname, '..', '..', '..', 'zmk-config')
-const KEYBOARD = 'dactyl'
+function getZmkPath() {
+  return process.env.ZMK_CONFIG_PATH || path.join(__dirname, '..', '..', '..', 'zmk-config')
+}
+
+function getLayoutFile() {
+  return process.env.LOCAL_LAYOUT_FILE || 'info.json'
+}
+
+function getKeymapFile() {
+  return process.env.LOCAL_KEYMAP_FILE
+}
 
 const EMPTY_KEYMAP = {
   keyboard: 'unknown',
@@ -15,46 +25,119 @@ const EMPTY_KEYMAP = {
 }
 
 function loadBehaviors() {
-  return JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'zmk-behaviors.json')))
+  const standardBehaviors = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'zmk-behaviors.json')))
+
+  // Load custom behaviors from keymap if available
+  const zmkPath = getZmkPath()
+  const keymapFile = findKeymapFile()
+
+  if (keymapFile && keymapFile.endsWith('.keymap')) {
+    const keymapPath = path.join(zmkPath, 'config', keymapFile)
+    if (fs.existsSync(keymapPath)) {
+      const parsed = parseKeymapFile(keymapPath)
+
+      // Convert custom behaviors to standard format
+      const customBehaviors = (parsed.behaviors || []).map(b => {
+        const params = []
+        // Infer params from bindingCells
+        if (b.bindingCells === 2) {
+          // Common pattern: hold-tap, mod-tap have 2 cells
+          if (b.compatible === 'zmk,behavior-hold-tap') {
+            params.push('behaviour', 'code')
+          } else {
+            params.push('code', 'code')
+          }
+        } else if (b.bindingCells === 1) {
+          params.push('code')
+        }
+
+        return {
+          code: `&${b.name}`,
+          name: b.name,
+          description: `Custom ${b.compatible?.replace('zmk,behavior-', '') || 'behavior'}`,
+          params,
+          isCustom: true
+        }
+      })
+
+      return [...standardBehaviors, ...customBehaviors]
+    }
+  }
+
+  return standardBehaviors
 }
 
 function loadKeycodes() {
   return JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'zmk-keycodes.json')))
 }
 
-function loadLayout (layout = 'LAYOUT') {
-  const layoutPath = path.join(ZMK_PATH, 'config', 'info.json')
-  return JSON.parse(fs.readFileSync(layoutPath)).layouts[layout].layout
-}
+function loadLayout (layout) {
+  const layoutPath = path.join(getZmkPath(), 'config', getLayoutFile())
+  const layoutData = JSON.parse(fs.readFileSync(layoutPath))
 
-function loadKeymap () {
-  const keymapPath = path.join(ZMK_PATH, 'config', 'keymap.json')
-  const keymapContent = fs.existsSync(keymapPath)
-    ? JSON.parse(fs.readFileSync(keymapPath))
-    : EMPTY_KEYMAP
+  if (!layoutData.layouts) {
+    return layoutData.layout
+  }
 
-  return parseKeymap(keymapContent)
+  // Try requested layout, then common defaults
+  const layoutNames = [layout, 'LAYOUT', 'default_layout', Object.keys(layoutData.layouts)[0]]
+  for (const name of layoutNames) {
+    if (name && layoutData.layouts[name]) {
+      return layoutData.layouts[name].layout
+    }
+  }
+
+  throw new Error('No layout found in ' + layoutPath)
 }
 
 function findKeymapFile () {
-  const files = fs.readdirSync(path.join(ZMK_PATH, 'config'))
+  const configuredFile = getKeymapFile()
+  if (configuredFile) return configuredFile
+  const files = fs.readdirSync(path.join(getZmkPath(), 'config'))
   return files.find(file => file.endsWith('.keymap'))
 }
 
-function exportKeymap (generatedKeymap, flash, callback) {
-  const keymapPath = path.join(ZMK_PATH, 'config')
+function loadKeymap () {
+  const zmkPath = getZmkPath()
   const keymapFile = findKeymapFile()
 
-  fs.existsSync(keymapPath) || fs.mkdirSync(keymapPath)
-  fs.writeFileSync(path.join(keymapPath, 'keymap.json'), generatedKeymap.json)
-  fs.writeFileSync(path.join(keymapPath, keymapFile), generatedKeymap.code)
+  if (keymapFile && keymapFile.endsWith('.keymap')) {
+    // Use DTS parser for .keymap files
+    const keymapPath = path.join(zmkPath, 'config', keymapFile)
+    if (fs.existsSync(keymapPath)) {
+      const parsed = parseKeymapFile(keymapPath)
+      // Convert to format expected by frontend (parse binding strings to objects)
+      return {
+        layers: parsed.keymap.layers.map(layer =>
+          layer.map(binding => parseKeyBinding(binding))
+        ),
+        layer_names: parsed.keymap.layerNames,
+        combos: parsed.combos,
+        behaviors: parsed.behaviors,
+        conditionalLayers: parsed.conditionalLayers
+      }
+    }
+  }
 
-  // Note: This isn't really helpful. In the QMK version I had this actually
-  // calling `make` and piping the output in realtime but setting up a ZMK dev
-  // environment proved to be more complex than I had patience for, so for now
-  // I'm writing changes to a zmk-config repo and counting on the predefined
-  // GitHub action to actually compile.
-  return childProcess.execFile('git', ['status'], { cwd: ZMK_PATH }, callback)
+  // Fallback to JSON
+  const jsonPath = path.join(zmkPath, 'config', 'keymap.json')
+  const keymapContent = fs.existsSync(jsonPath)
+    ? JSON.parse(fs.readFileSync(jsonPath))
+    : EMPTY_KEYMAP
+
+  return parseKeymapJson(keymapContent)
+}
+
+function exportKeymap (generatedKeymap, flash, callback) {
+  const zmkPath = getZmkPath()
+  const configPath = path.join(zmkPath, 'config')
+  const keymapFile = findKeymapFile()
+
+  fs.existsSync(configPath) || fs.mkdirSync(configPath)
+  fs.writeFileSync(path.join(configPath, 'keymap.json'), generatedKeymap.json)
+  fs.writeFileSync(path.join(configPath, keymapFile), generatedKeymap.code)
+
+  return childProcess.execFile('git', ['status'], { cwd: zmkPath }, callback)
 }
 
 module.exports = {

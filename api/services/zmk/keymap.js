@@ -180,6 +180,7 @@ function validateKeymapJson(keymap) {
 module.exports = {
   KeymapValidationError,
   encodeKeymap,
+  parseKeyBinding,
   parseKeymap,
   generateKeymap,
   validateKeymapJson
