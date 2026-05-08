@@ -4,16 +4,20 @@ import isEmpty from 'lodash/isEmpty'
 import keyBy from 'lodash/keyBy'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
-import { useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 
 import KeyboardLayout from './KeyboardLayout'
 import LayerSelector from './LayerSelector'
+import ComboOverlay from './ComboOverlay'
+import { isComboVisibleOnLayer } from './combo-utils'
 import { getKeyBoundingBox } from '../key-units'
 import { DefinitionsContext, SearchContext } from '../providers'
 
 function Keyboard(props) {
   const { layout, keymap, onUpdate } = props
   const [activeLayer, setActiveLayer] = useState(0)
+  const [showCombos, setShowCombos] = useState(true)
+  const [selectedCombo, setSelectedCombo] = useState(null)
   const {keycodes, behaviours} = useContext(DefinitionsContext)
 
   const availableLayers = useMemo(() => isEmpty(keymap) ? [] : (
@@ -136,25 +140,75 @@ function Keyboard(props) {
     onUpdate({ ...keymap, layers, layer_names })
   }, [keymap, activeLayer, setActiveLayer, onUpdate])
 
+  const visibleCombos = useMemo(() => {
+    if (!keymap.combos) return []
+    return keymap.combos.filter(combo => isComboVisibleOnLayer(combo, activeLayer))
+  }, [keymap.combos, activeLayer])
+
+  const handleSelectCombo = useCallback((combo) => {
+    setSelectedCombo(prev => prev?.name === combo.name ? null : combo)
+  }, [])
+
+  const handleUpdateCombo = useCallback((updatedCombo) => {
+    if (!keymap.combos) return
+    const combos = keymap.combos.map(c =>
+      c.name === updatedCombo.name ? updatedCombo : c
+    )
+    onUpdate({ ...keymap, combos })
+  }, [keymap, onUpdate])
+
+  const handleToggleCombos = useCallback(() => {
+    setShowCombos(prev => !prev)
+  }, [])
+
   return (
     <>
-      <LayerSelector
-        layers={keymap.layer_names}
-        activeLayer={activeLayer}
-        onSelect={setActiveLayer}
-        onNewLayer={handleCreateLayer}
-        onRenameLayer={handleRenameLayer}
-        onDeleteLayer={handleDeleteLayer}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
+        <LayerSelector
+          layers={keymap.layer_names}
+          activeLayer={activeLayer}
+          onSelect={setActiveLayer}
+          onNewLayer={handleCreateLayer}
+          onRenameLayer={handleRenameLayer}
+          onDeleteLayer={handleDeleteLayer}
+        />
+        {keymap.combos && keymap.combos.length > 0 && (
+          <button
+            onClick={handleToggleCombos}
+            style={{
+              padding: '4px 12px',
+              fontSize: '14px',
+              cursor: 'pointer',
+              backgroundColor: showCombos ? '#0066cc' : '#666',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px'
+            }}
+          >
+            {showCombos ? 'Hide' : 'Show'} Combos ({visibleCombos.length})
+          </button>
+        )}
+      </div>
       <SearchContext.Provider value={{ getSearchTargets, sources }}>
         <div style={getWrapperStyle()}>
           {isReady() && (
-            <KeyboardLayout
-              data-layer={activeLayer}
-              layout={layout}
-              bindings={keymap.layers[activeLayer]}
-              onUpdate={event => handleUpdateLayer(activeLayer, event)}
-            />
+            <div style={{ position: 'relative' }}>
+              <KeyboardLayout
+                data-layer={activeLayer}
+                layout={layout}
+                bindings={keymap.layers[activeLayer]}
+                onUpdate={event => handleUpdateLayer(activeLayer, event)}
+              />
+              {showCombos && visibleCombos.length > 0 && (
+                <ComboOverlay
+                  layout={layout}
+                  combos={visibleCombos}
+                  selectedCombo={selectedCombo}
+                  onSelectCombo={handleSelectCombo}
+                  onUpdateCombo={handleUpdateCombo}
+                />
+              )}
+            </div>
           )}
         </div>
       </SearchContext.Provider>

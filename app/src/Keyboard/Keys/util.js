@@ -55,7 +55,7 @@ export function hydrateTree(value, params, sources) {
   const bind = value
   const behaviour = get(sources.behaviours, bind)
   const behaviourParams = getBehaviourParams(params, behaviour)
-  const commands = keyBy(behaviour.commands, 'code')
+  const commands = keyBy(behaviour?.commands || [], 'code')
 
   function getSourceValue(value, as) {
     if (as === 'command') return commands[value]

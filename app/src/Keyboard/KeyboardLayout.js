@@ -32,7 +32,7 @@ function KeyboardLayout(props) {
   }, [normalized, onUpdate])
 
   return (
-    <div style={{ position: 'relative' }}>
+    <>
       {layout.map((key, i) => (
         <Key
           key={i}
@@ -45,7 +45,7 @@ function KeyboardLayout(props) {
           onUpdate={bind => handleUpdateBind(i, bind)}
         />
       ))}
-    </div>
+    </>
   )
 }
 
