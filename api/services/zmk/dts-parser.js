@@ -27,18 +27,25 @@ function findByName(node, name) {
   return null
 }
 
-function getProperty(node, propName) {
+function getProperty(node, propName, collectAll = false) {
   const props = node.children.filter(c => c.type === 'property')
   for (const prop of props) {
     const name = prop.children.find(c => c.type === 'identifier')?.text
     if (name === propName) {
+      if (collectAll) {
+        // Collect all value nodes (for properties like bindings with multiple cells)
+        const values = prop.children.filter(c =>
+          c.type === 'integer_cells' || c.type === 'string_literal'
+        )
+        return values.map(v => v.text)
+      }
       const value = prop.children.find(c =>
         c.type === 'integer_cells' || c.type === 'string_literal'
       )
       return value?.text
     }
   }
-  return null
+  return collectAll ? [] : null
 }
 
 function parseIntegerCells(cellsText) {
@@ -138,16 +145,37 @@ function parseBehavior(behaviorNode) {
   const name = behaviorNode.children.find(c => c.type === 'identifier')?.text
   const compatible = getProperty(behaviorNode, 'compatible')?.replace(/"/g, '')
   const bindingCells = getProperty(behaviorNode, '#binding-cells')
-  const bindings = getProperty(behaviorNode, 'bindings')
+  const bindingsArr = getProperty(behaviorNode, 'bindings', true) // collect all
   const flavor = getProperty(behaviorNode, 'flavor')?.replace(/"/g, '')
   const tappingTerm = getProperty(behaviorNode, 'tapping-term-ms')
   const quickTap = getProperty(behaviorNode, 'quick-tap-ms')
+
+  // Parse bindings - for hold-tap, two separate cells: <&hold>, <&tap>
+  let holdBinding = null
+  let tapBinding = null
+  let bindingsStr = bindingsArr.map(b => b.replace(/^<|>$/g, '').trim()).join(', ')
+
+  if (compatible === 'zmk,behavior-hold-tap' && bindingsArr.length >= 2) {
+    holdBinding = bindingsArr[0]?.replace(/^<|>$/g, '').trim()
+    tapBinding = bindingsArr[1]?.replace(/^<|>$/g, '').trim()
+  } else if (compatible === 'zmk,behavior-mod-morph' && bindingsArr.length >= 2) {
+    // mod-morph: first is normal, second is shifted
+    holdBinding = bindingsArr[0]?.replace(/^<|>$/g, '').trim()
+    tapBinding = bindingsArr[1]?.replace(/^<|>$/g, '').trim()
+  } else if (bindingsArr.length >= 1) {
+    holdBinding = bindingsArr[0]?.replace(/^<|>$/g, '').trim()
+    if (bindingsArr.length >= 2) {
+      tapBinding = bindingsArr[1]?.replace(/^<|>$/g, '').trim()
+    }
+  }
 
   return {
     name,
     compatible,
     bindingCells: bindingCells ? parseInt(bindingCells.replace(/[<>]/g, '')) : undefined,
-    bindings: bindings?.replace(/^<|>$/g, '').trim(),
+    bindings: bindingsStr,
+    holdBinding,
+    tapBinding,
     flavor,
     tappingTermMs: tappingTerm ? parseInt(tappingTerm.replace(/[<>]/g, '')) : undefined,
     quickTapMs: quickTap ? parseInt(quickTap.replace(/[<>]/g, '')) : undefined
@@ -160,6 +188,29 @@ function parseBehaviors(rootNode) {
 
   const behaviorNodes = behaviorsNode.children.filter(c => c.type === 'node')
   return behaviorNodes.map(parseBehavior)
+}
+
+// ============ MACRO PARSER ============
+
+function parseMacro(macroNode) {
+  const name = macroNode.children.find(c => c.type === 'identifier')?.text
+  const compatible = getProperty(macroNode, 'compatible')?.replace(/"/g, '')
+  const bindingCells = getProperty(macroNode, '#binding-cells')
+
+  return {
+    name,
+    compatible,
+    bindingCells: bindingCells ? parseInt(bindingCells.replace(/[<>]/g, '')) : 0,
+    isMacro: true
+  }
+}
+
+function parseMacros(rootNode) {
+  const macrosNode = findByName(rootNode, 'macros')
+  if (!macrosNode) return []
+
+  const macroNodes = macrosNode.children.filter(c => c.type === 'node')
+  return macroNodes.map(parseMacro)
 }
 
 // ============ CONDITIONAL LAYERS ============
@@ -192,6 +243,7 @@ function parseKeymapSource(source) {
     combos: parseCombos(root),
     keymap: parseKeymap(root),
     behaviors: parseBehaviors(root),
+    macros: parseMacros(root),
     conditionalLayers: parseConditionalLayers(root),
     _tree: tree // Keep for source location tracking
   }
