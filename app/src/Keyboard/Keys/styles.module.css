@@ -3,6 +3,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	cursor: pointer;
 
 	color: #999;
 	background-color: whitesmoke;
@@ -16,6 +17,13 @@
 }
 .key:hover .code, .key:hover .behaviour-binding {
 	color: white;
+}
+
+.keyContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	pointer-events: none;
 }
 .key > .code {
 	padding: 5px;
@@ -63,4 +71,33 @@
   background-color: white;
   border-radius: 5px 0;
   opacity: 1;
+}
+
+.keyRaised {
+  box-shadow: 0 3px 0 rgb(60, 179, 113), 0 4px 8px rgba(60, 179, 113, 0.3);
+  transform: translateY(-2px);
+  z-index: 2;
+}
+
+.keyHighlighted {
+  background-color: rgba(60, 179, 113, 0.15);
+  box-shadow: 0 3px 0 rgb(60, 179, 113), 0 4px 8px rgba(60, 179, 113, 0.3);
+  transform: translateY(-2px);
+  z-index: 2;
+}
+
+.autoshiftDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.autoshiftTap {
+  font-size: 1em;
+}
+
+.autoshiftHold {
+  font-size: 0.7em;
+  opacity: 0.6;
 }

@@ -1,8 +1,6 @@
-import cloneDeep from 'lodash/cloneDeep'
 import get from 'lodash/get'
-import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 import { SearchContext } from '../../providers'
 import { getBehaviourParams } from '../../keymap'
@@ -11,22 +9,18 @@ import { getKeyStyles } from '../../key-units'
 import KeyParamlist from './KeyParamlist'
 import * as keyPropTypes from './keyPropTypes'
 import {
-  createPromptMessage,
   hydrateTree,
   isSimple,
   isComplex,
-  makeIndex
+  makeIndex,
+  getShiftedSymbol
 } from './util'
 import styles from './styles.module.css'
 
-import Modal from '../../Common/Modal'
-import ValuePicker from '../../ValuePicker'
-
 function Key(props) {
-  const { getSearchTargets, sources } = useContext(SearchContext)
-  const { position, rotation, size } = props
-  const { label, value, params, onUpdate } = props
-  const [editing, setEditing] = useState(null)
+  const { sources } = useContext(SearchContext)
+  const { position, rotation, size, raised, highlighted, onClick } = props
+  const { label, value, params } = props
 
   const bind = value
   const behaviour = get(sources.behaviours, bind)
@@ -37,87 +31,53 @@ function Key(props) {
   const index = makeIndex(normalized)
   const positioningStyle = getKeyStyles(position, size, rotation)
 
-  function onMouseOver(event) {
-    const old = document.querySelector(`.${styles.highlight}`)
-    old && old.classList.remove(styles.highlight)
-    event.target.classList.add(styles.highlight)
-  }
-  function onMouseLeave(event) {
-    event.target.classList.remove(styles.highlight)
-  }
-
-  function handleSelectCode(event) {
-    const editing = pick(event, ['target', 'codeIndex', 'code', 'param'])
-    editing.targets = getSearchTargets(editing.param, value)
-    setEditing(editing)
-  }
-  function handleSelectBehaviour(event) {
+  function handleClick(event) {
     event.stopPropagation()
-    setEditing({
-      target: event.target,
-      targets: getSearchTargets('behaviour', value),
-      codeIndex: 0,
-      code: value,
-      param: 'behaviour'
-    })
+    onClick?.(event)
   }
-  function handleSelectValue(source) {
-    const { codeIndex } = editing
-    const updated = cloneDeep(normalized)
-    const index = makeIndex(updated)
-    const targetCode = index[codeIndex]
 
-    targetCode.value = source.code
-    targetCode.params = []
-    index.forEach(node => {
-      delete node.source
-    })
-
-    setEditing(null)
-    onUpdate(pick(updated, ['value', 'params']))
-  }
+  const keyClassName = [
+    styles.key,
+    raised && styles.keyRaised,
+    highlighted && styles.keyHighlighted
+  ].filter(Boolean).join(' ')
 
   return (
     <div
-      className={styles.key}
+      className={keyClassName}
       data-label={label}
       data-u={size.u}
       data-h={size.h}
       data-simple={isSimple(normalized)}
       data-long={isComplex(normalized, behaviourParams)}
       style={positioningStyle}
-      onMouseOver={onMouseOver}
-      onMouseLeave={onMouseLeave}
+      onClick={handleClick}
     >
-    {behaviour ? (
-      <span
-        className={styles['behaviour-binding']}
-        onClick={handleSelectBehaviour}
-      >
-        {behaviour.code}
-      </span>
-    ) : null}
-    <KeyParamlist
-      root={true}
-      index={index}
-      params={behaviourParams}
-      values={normalized.params}
-      onSelect={handleSelectCode}
-    />
-    {editing && (
-      <Modal>
-        <ValuePicker
-          target={editing.target}
-          value={editing.code}
-          param={editing.param}
-          choices={editing.targets}
-          prompt={createPromptMessage(editing.param)}
-          searchKey="code"
-          onSelect={handleSelectValue}
-          onCancel={() => setEditing(null)}
+    <span className={styles.keyContent}>
+      {behaviour ? (
+        <span className={styles['behaviour-binding']}>
+          {behaviour.code}
+        </span>
+      ) : null}
+      {behaviour?.isAutoshift && normalized.params[0]?.source ? (
+        <span className={styles.autoshiftDisplay}>
+          <span className={styles.autoshiftTap}>
+            {normalized.params[0].source.symbol || normalized.params[0].value}
+          </span>
+          <span className={styles.autoshiftHold}>
+            {getShiftedSymbol(normalized.params[0].source.symbol || normalized.params[0].value)}
+          </span>
+        </span>
+      ) : (
+        <KeyParamlist
+          root={true}
+          index={index}
+          params={behaviourParams}
+          values={normalized.params}
+          onSelect={() => {}}
         />
-      </Modal>
-    )}
+      )}
+    </span>
   </div>
   )
 }
@@ -139,7 +99,10 @@ Key.propTypes = {
   label: PropTypes.string,
   value: keyPropTypes.value.isRequired,
   params: PropTypes.arrayOf(keyPropTypes.node),
-  onUpdate: PropTypes.func.isRequired
+  onUpdate: PropTypes.func.isRequired,
+  raised: PropTypes.bool,
+  highlighted: PropTypes.bool,
+  onClick: PropTypes.func
 }
 
 export default Key

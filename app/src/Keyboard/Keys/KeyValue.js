@@ -11,8 +11,8 @@ function NullKey() {
 
 function KeyValue(props) {
   const { param, index, value, source, onSelect } = props
-  const title = source && `(${source.code}) ${source.description}`
-  const text = source && (source?.symbol || source?.code)
+  const title = source ? `(${source.code}) ${source.description}` : String(value)
+  const text = source?.symbol || source?.code || value
   const icon = source?.faIcon && <Icon name={source.faIcon} />
 
   const handleClick = useMemo(() => function (event) {

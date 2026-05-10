@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 export const param = PropTypes.oneOfType([
   PropTypes.oneOf(
-    ['code', 'layer', 'mod', 'command']
+    ['code', 'layer', 'mod', 'command', 'behaviour']
   ),
   PropTypes.shape({
     enum: PropTypes.array.isRequired,
