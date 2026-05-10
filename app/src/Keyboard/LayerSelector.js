@@ -22,9 +22,11 @@ function onKey(mapping) {
 function LayerSelector(props) {
   const ref = useRef(null)
   const { activeLayer, layers } = props
-  const { onSelect, onNewLayer, onRenameLayer, onDeleteLayer } = props
+  const { onSelect, onNewLayer, onRenameLayer, onDeleteLayer, onReorderLayer } = props
   const [renaming, setRenaming] = useState(false)
   const [editing, setEditing] = useState('')
+  const [dragIndex, setDragIndex] = useState(null)
+  const [dropIndex, setDropIndex] = useState(null)
 
   const handleSelect = useMemo(() => function(layer) {
     if (layer === activeLayer) {
@@ -86,6 +88,36 @@ function LayerSelector(props) {
     }
   }, [])
 
+  const handleDragStart = useCallback((e, index) => {
+    setDragIndex(index)
+    e.dataTransfer.effectAllowed = 'move'
+  }, [])
+
+  const handleDragOver = useCallback((e, index) => {
+    e.preventDefault()
+    if (dragIndex !== null && index !== dragIndex) {
+      setDropIndex(index)
+    }
+  }, [dragIndex])
+
+  const handleDragLeave = useCallback(() => {
+    setDropIndex(null)
+  }, [])
+
+  const handleDrop = useCallback((e, index) => {
+    e.preventDefault()
+    if (dragIndex !== null && dragIndex !== index) {
+      onReorderLayer?.(dragIndex, index)
+    }
+    setDragIndex(null)
+    setDropIndex(null)
+  }, [dragIndex, onReorderLayer])
+
+  const handleDragEnd = useCallback(() => {
+    setDragIndex(null)
+    setDropIndex(null)
+  }, [])
+
   return (
     <div
       className={styles['layer-selector']}
@@ -97,9 +129,19 @@ function LayerSelector(props) {
         {layers.map((name, i) => (
           <li
             key={`layer-${i}`}
-            className={activeLayer === i ? styles.active : ''}
+            className={[
+              activeLayer === i ? styles.active : '',
+              dragIndex === i ? styles.dragging : '',
+              dropIndex === i ? styles.dropTarget : ''
+            ].filter(Boolean).join(' ')}
             data-layer={i}
+            draggable={!renaming}
             onClick={stop(() => handleSelect(i))}
+            onDragStart={(e) => handleDragStart(e, i)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, i)}
+            onDragEnd={handleDragEnd}
           >
             <span className={styles.index}>{i}</span>
             {(activeLayer === i && renaming) ? (
@@ -144,7 +186,8 @@ LayerSelector.propTypes = {
   onSelect: PropTypes.func.isRequired,
   onNewLayer: PropTypes.func.isRequired,
   onRenameLayer: PropTypes.func.isRequired,
-  onDeleteLayer: PropTypes.func.isRequired
+  onDeleteLayer: PropTypes.func.isRequired,
+  onReorderLayer: PropTypes.func
 }
 
 export default LayerSelector
