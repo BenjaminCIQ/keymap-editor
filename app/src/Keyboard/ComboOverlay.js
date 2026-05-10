@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useCallback, useMemo, useRef, useEffect } from 'react'
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react'
 
 import ComboKey from './ComboKey'
 import { getKeyCenter, getComboPositionAndRouting, getOrthogonalPath } from './combo-utils'
@@ -7,11 +7,29 @@ import { useComboInteraction } from './useComboInteraction'
 import { getKeyBoundingBox } from '../key-units'
 import styles from './combo-styles.module.css'
 
-const ENDPOINT_HIT_RADIUS = 12
+const ENDPOINT_HIT_RADIUS = 15
+const DRAG_THRESHOLD_MS = 150
+
+function findNearestKeyIndex(layout, pos) {
+  let nearest = -1
+  let minDist = Infinity
+  layout.forEach((key, i) => {
+    const center = getKeyCenter(key)
+    const dist = Math.hypot(center.x - pos.x, center.y - pos.y)
+    if (dist < minDist) {
+      minDist = dist
+      nearest = i
+    }
+  })
+  return nearest
+}
 
 function ComboOverlay(props) {
-  const { layout, combos, selectedCombo, onSelectCombo, onUpdateCombo } = props
+  const { layout, combos, selectedCombo, onSelectCombo, onUpdateCombo, onDeleteCombo, onHighlightKeys, onEditCombo } = props
   const containerRef = useRef(null)
+  const [selectedEndpoint, setSelectedEndpoint] = useState(null)
+  const dragTimerRef = useRef(null)
+  const pendingDragRef = useRef(null)
 
   const {
     dragState,
@@ -96,18 +114,88 @@ function ComboOverlay(props) {
     }
   }, [dragState, handleMouseMove, handleMouseUp])
 
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (selectedEndpoint !== null && selectedCombo) {
+        e.preventDefault()
+        if (selectedCombo.keyPositions.length <= 2) {
+          return
+        }
+        const newPositions = selectedCombo.keyPositions.filter((_, i) => i !== selectedEndpoint)
+        onUpdateCombo({ ...selectedCombo, keyPositions: newPositions })
+        setSelectedEndpoint(null)
+      } else if (selectedCombo && selectedEndpoint === null) {
+        e.preventDefault()
+        onDeleteCombo?.(selectedCombo)
+      }
+    } else if (e.key === 'Escape') {
+      setSelectedEndpoint(null)
+      onSelectCombo?.(null)
+    }
+  }, [selectedCombo, selectedEndpoint, onUpdateCombo, onDeleteCombo, onSelectCombo])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
   const handleEndpointMouseDown = useCallback((e, combo, endpointIdx) => {
     e.stopPropagation()
     const pos = getMousePosition(e)
-    startDragEndpoint(combo, endpointIdx, pos)
+
+    // Store pending drag info
+    pendingDragRef.current = { combo, endpointIdx, pos }
+
+    // Start drag after delay
+    dragTimerRef.current = setTimeout(() => {
+      if (pendingDragRef.current) {
+        startDragEndpoint(combo, endpointIdx, pos)
+        pendingDragRef.current = null
+      }
+    }, DRAG_THRESHOLD_MS)
   }, [getMousePosition, startDragEndpoint])
+
+  const handleEndpointMouseUp = useCallback((e, combo, endpointIdx) => {
+    e.stopPropagation()
+
+    // If timer still pending, it was a click not drag
+    if (dragTimerRef.current) {
+      clearTimeout(dragTimerRef.current)
+      dragTimerRef.current = null
+      pendingDragRef.current = null
+
+      // Select the endpoint
+      onSelectCombo?.(combo)
+      setSelectedEndpoint(endpointIdx)
+    }
+  }, [onSelectCombo])
 
   const handleComboKeyMouseDown = useCallback((e, combo, position) => {
     e.stopPropagation()
     startDragComboKey(combo, position)
   }, [startDragComboKey])
 
-  const highlightedKeyIndices = useMemo(() => {
+  const handleComboDoubleClick = useCallback((e, combo) => {
+    e.stopPropagation()
+    onEditCombo?.(combo)
+  }, [onEditCombo])
+
+  const handleShiftClickKey = useCallback((e) => {
+    if (!e.shiftKey || !selectedCombo) return
+
+    const pos = getMousePosition(e)
+    const nearestKeyIdx = findNearestKeyIndex(layout, pos)
+
+    if (selectedCombo.keyPositions.includes(nearestKeyIdx)) return
+
+    const updatedCombo = {
+      ...selectedCombo,
+      keyPositions: [...selectedCombo.keyPositions, nearestKeyIdx]
+    }
+    onUpdateCombo(updatedCombo)
+  }, [selectedCombo, layout, getMousePosition, onUpdateCombo])
+
+  const dragHighlightedKeyIndices = useMemo(() => {
     if (!dragState) return new Set()
 
     if (dragState.type === 'endpoint' && dragState.snapTarget) {
@@ -118,6 +206,10 @@ function ComboOverlay(props) {
     }
     return new Set()
   }, [dragState])
+
+  useEffect(() => {
+    onHighlightKeys?.(dragHighlightedKeyIndices)
+  }, [dragHighlightedKeyIndices, onHighlightKeys])
 
   if (!layout || layout.length === 0 || combos.length === 0) {
     return null
@@ -179,7 +271,10 @@ function ComboOverlay(props) {
   }
 
   return (
-    <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', userSelect: 'none' }}>
+    <div
+      ref={containerRef}
+      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', userSelect: 'none', zIndex: 5, pointerEvents: 'none' }}
+    >
       <svg
         width={boundingBox.x}
         height={boundingBox.y}
@@ -195,7 +290,7 @@ function ComboOverlay(props) {
             orient="auto"
             markerUnits="userSpaceOnUse"
           >
-            <path d="M 0 2 L 5 5 L 0 8 Z" fill="#0066cc" fillOpacity="0.6" />
+            <path d="M 0 2 L 5 5 L 0 8 Z" fill="rgb(60, 179, 113)" fillOpacity="0.6" />
           </marker>
           <marker
             id="comboArrowSelected"
@@ -206,22 +301,20 @@ function ComboOverlay(props) {
             orient="auto"
             markerUnits="userSpaceOnUse"
           >
-            <path d="M 0 2 L 5 5 L 0 8 Z" fill="#0066cc" />
+            <path d="M 0 2 L 5 5 L 0 8 Z" fill="rgb(60, 179, 113)" />
+          </marker>
+          <marker
+            id="comboArrowEndpointSelected"
+            markerWidth="10"
+            markerHeight="10"
+            refX="0"
+            refY="5"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <path d="M 0 2 L 5 5 L 0 8 Z" fill="#ff6600" />
           </marker>
         </defs>
-
-        {highlightedKeyIndices.size > 0 && keyCenters
-          .filter(kc => highlightedKeyIndices.has(kc.index))
-          .map(kc => (
-            <circle
-              key={`highlight-${kc.index}`}
-              cx={kc.x}
-              cy={kc.y}
-              r={10}
-              className={styles.dropTarget}
-            />
-          ))
-        }
 
         {comboData.map(({ combo, position, routing, keyData }) => {
           const comboPos = getDraggedComboPosition(combo, position)
@@ -235,29 +328,28 @@ function ComboOverlay(props) {
                 const isDragging = dragState?.type === 'endpoint' &&
                   dragState?.combo.name === combo.name &&
                   dragState?.endpointIndex === endpointIdx
+                const isEndpointSelected = isSelected && selectedEndpoint === endpointIdx
 
                 return (
                   <g key={`${combo.name}-endpoint-${endpointIdx}`}>
+                    {/* Visible line */}
                     <path
                       d={pathD}
-                      className={styles.comboLine}
-                      markerEnd={isSelected ? "url(#comboArrowSelected)" : "url(#comboArrow)"}
+                      className={isEndpointSelected ? styles.comboLineSelected : styles.comboLine}
+                      markerEnd={isEndpointSelected ? "url(#comboArrowEndpointSelected)" : (isSelected ? "url(#comboArrowSelected)" : "url(#comboArrow)")}
                       style={{ opacity: isSelected ? 1 : 0.6 }}
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
-                    {/* Invisible hit area for dragging */}
-                    <circle
-                      cx={endpointPos.x}
-                      cy={endpointPos.y}
-                      r={ENDPOINT_HIT_RADIUS}
-                      fill="transparent"
+                    {/* Invisible thick path for click/drag detection */}
+                    <path
+                      d={pathD}
+                      fill="none"
                       stroke="transparent"
-                      style={{
-                        cursor: isDragging ? 'grabbing' : 'grab',
-                        pointerEvents: 'auto'
-                      }}
+                      strokeWidth={16}
+                      style={{ cursor: isDragging ? 'grabbing' : 'pointer', pointerEvents: 'auto' }}
                       onMouseDown={(e) => handleEndpointMouseDown(e, combo, endpointIdx)}
+                      onMouseUp={(e) => handleEndpointMouseUp(e, combo, endpointIdx)}
                     />
                   </g>
                 )
@@ -277,7 +369,8 @@ function ComboOverlay(props) {
             binding={combo.bindings}
             selected={selectedCombo?.name === combo.name}
             dragging={dragState?.type === 'combo-key' && dragState?.combo.name === combo.name}
-            onClick={() => onSelectCombo?.(combo)}
+            onClick={() => { setSelectedEndpoint(null); onSelectCombo?.(combo) }}
+            onDoubleClick={(e) => handleComboDoubleClick(e, combo)}
             onMouseDown={(e) => handleComboKeyMouseDown(e, combo, comboPos)}
           />
         )
@@ -296,7 +389,10 @@ ComboOverlay.propTypes = {
   })).isRequired,
   selectedCombo: PropTypes.object,
   onSelectCombo: PropTypes.func,
-  onUpdateCombo: PropTypes.func
+  onUpdateCombo: PropTypes.func,
+  onDeleteCombo: PropTypes.func,
+  onHighlightKeys: PropTypes.func,
+  onEditCombo: PropTypes.func
 }
 
 export default ComboOverlay

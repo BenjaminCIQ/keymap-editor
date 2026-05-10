@@ -10,8 +10,15 @@
 }
 
 .comboLine {
-  stroke: #0066cc;
+  stroke: rgb(60, 179, 113);
   stroke-width: 1;
+  stroke-dasharray: 4 2;
+  fill: none;
+}
+
+.comboLineSelected {
+  stroke: #ff6600;
+  stroke-width: 2;
   stroke-dasharray: 4 2;
   fill: none;
 }
@@ -24,9 +31,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #e8e8e8;
+  background-color: #e8f5e9;
   color: #333;
-  border: 2px solid #0066cc;
+  border: 2px solid rgb(60, 179, 113);
   border-radius: 3px;
   font-size: 8px;
   font-weight: 600;
@@ -42,27 +49,32 @@
 
 .comboKey:hover {
   background-color: #fff;
-  box-shadow: 0 3px 6px rgba(0, 102, 204, 0.4);
+  box-shadow: 0 3px 6px rgba(60, 179, 113, 0.4);
   transform: translate(-50%, -50%) scale(1.1);
 }
 
 .comboKeySelected {
-  background-color: #0066cc;
+  background-color: rgb(60, 179, 113);
   color: #fff;
-  border-color: #004499;
+  border-color: rgb(45, 140, 90);
   z-index: 100;
+}
+
+.comboKeySelected:hover {
+  background-color: rgb(50, 160, 100);
+  color: #fff;
 }
 
 .comboKeyDragging {
   opacity: 0.8;
-  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.5);
+  box-shadow: 0 4px 12px rgba(60, 179, 113, 0.5);
   transform: translate(-50%, -50%) scale(1.15);
 }
 
 
 .dropTarget {
-  fill: rgba(0, 102, 204, 0.3);
-  stroke: #0066cc;
+  fill: rgba(60, 179, 113, 0.3);
+  stroke: rgb(60, 179, 113);
   stroke-width: 2;
 }
 
