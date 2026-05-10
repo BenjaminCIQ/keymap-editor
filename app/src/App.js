@@ -23,14 +23,21 @@ function App() {
   const [editingKeymap, setEditingKeymap] = useState(null)
   const [saving, setSaving] = useState(false)
 
-  function handleCompile() {
-    fetch(`${config.apiBaseUrl}/keymap`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(editingKeymap || keymap)
-    })
+  async function handleCompile() {
+    setSaving(true)
+    try {
+      await fetch(`${config.apiBaseUrl}/keymap`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editingKeymap || keymap)
+      })
+      setKeymap(editingKeymap)
+      setEditingKeymap(null)
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleCommitChanges = useMemo(() => function() {
