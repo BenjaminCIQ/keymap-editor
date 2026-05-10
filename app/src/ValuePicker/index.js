@@ -184,13 +184,13 @@ function ValuePicker (props) {
 }
 
 ValuePicker.propTypes = {
-  target: PropTypes.object.isRequired,
+  target: PropTypes.object,
   choices: PropTypes.array.isRequired,
   param: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
-  ]).isRequired,
-  value: PropTypes.string.isRequired,
+  ]),
+  value: PropTypes.string,
   prompt: PropTypes.string.isRequired,
   searchKey: PropTypes.string.isRequired,
   searchThreshold: PropTypes.number,
