@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const { parseKeymap: parseKeymapJson, parseKeyBinding } = require('./keymap')
 const { parseKeymapFile } = require('./dts-parser')
+const { updateKeymapBindings, updateKeymapCombos, updateLayerNames } = require('./keymap-updater')
 
 function getZmkPath() {
   return process.env.ZMK_CONFIG_PATH || path.join(__dirname, '..', '..', '..', 'zmk-config')
@@ -39,11 +40,18 @@ function loadBehaviors() {
       // Convert custom behaviors to standard format
       const customBehaviors = (parsed.behaviors || []).map(b => {
         const params = []
-        // Infer params from bindingCells
+        // Infer params from bindingCells and holdBinding
         if (b.bindingCells === 2) {
-          // Common pattern: hold-tap, mod-tap have 2 cells
           if (b.compatible === 'zmk,behavior-hold-tap') {
-            params.push('behaviour', 'code')
+            // Check holdBinding to determine hold param type
+            // &mo = layer, &kp = keycode, &sk = keycode
+            const holdBehavior = b.holdBinding?.match(/^&(\w+)/)?.[1]
+            if (holdBehavior === 'mo' || holdBehavior === 'sl' || holdBehavior === 'to' || holdBehavior === 'tog') {
+              params.push('layer', 'code')
+            } else {
+              // &kp, &sk, or other - treat as keycode
+              params.push('code', 'code')
+            }
           } else {
             params.push('code', 'code')
           }
@@ -56,11 +64,38 @@ function loadBehaviors() {
           name: b.name,
           description: `Custom ${b.compatible?.replace('zmk,behavior-', '') || 'behavior'}`,
           params,
+          holdBinding: b.holdBinding,
+          tapBinding: b.tapBinding,
           isCustom: true
         }
       })
 
-      return [...standardBehaviors, ...customBehaviors]
+      // Convert macros to behaviors
+      const customMacros = (parsed.macros || []).map(m => {
+        const params = []
+        if (m.bindingCells === 1) {
+          params.push('code')
+        } else if (m.bindingCells === 2) {
+          params.push('code', 'code')
+        }
+
+        // Check if it's an autoshift-style macro (name contains 'as')
+        const isAutoshift = m.name?.toLowerCase().includes('as') ||
+          m.compatible === 'zmk,behavior-macro-one-param' ||
+          m.compatible === 'zmk,behavior-macro-two-param'
+
+        return {
+          code: `&${m.name}`,
+          name: m.name,
+          description: `Macro${m.bindingCells ? ` (${m.bindingCells} param)` : ''}`,
+          params,
+          isCustom: true,
+          isMacro: true,
+          isAutoshift: isAutoshift && m.bindingCells === 1
+        }
+      })
+
+      return [...standardBehaviors, ...customBehaviors, ...customMacros]
     }
   }
 
@@ -135,7 +170,44 @@ function exportKeymap (generatedKeymap, flash, callback) {
 
   fs.existsSync(configPath) || fs.mkdirSync(configPath)
   fs.writeFileSync(path.join(configPath, 'keymap.json'), generatedKeymap.json)
-  fs.writeFileSync(path.join(configPath, keymapFile), generatedKeymap.code)
+
+  // For .keymap files, use in-place update to preserve behaviors, macros, etc.
+  if (keymapFile && keymapFile.endsWith('.keymap')) {
+    const keymapPath = path.join(configPath, keymapFile)
+    if (fs.existsSync(keymapPath)) {
+      try {
+        let updatedCode
+        console.log('Saving keymap to:', keymapPath)
+        console.log('Layer names:', generatedKeymap.keymap.layer_names)
+
+        // Update layer names (#defines and references)
+        if (generatedKeymap.keymap.layer_names) {
+          updatedCode = updateLayerNames(keymapPath, generatedKeymap.keymap.layer_names)
+          fs.writeFileSync(keymapPath, updatedCode)
+          console.log('Updated layer names')
+        }
+
+        // Update bindings (re-reads file to get latest)
+        updatedCode = updateKeymapBindings(keymapPath, generatedKeymap.keymap)
+        fs.writeFileSync(keymapPath, updatedCode)
+        console.log('Updated bindings')
+
+        // Then update combos if present (re-reads file to get latest)
+        if (generatedKeymap.keymap.combos) {
+          updatedCode = updateKeymapCombos(keymapPath, generatedKeymap.keymap.combos)
+          fs.writeFileSync(keymapPath, updatedCode)
+          console.log('Updated combos')
+        }
+      } catch (err) {
+        console.error('In-place update failed, falling back to full rewrite:', err.message)
+        fs.writeFileSync(keymapPath, generatedKeymap.code)
+      }
+    } else {
+      fs.writeFileSync(keymapPath, generatedKeymap.code)
+    }
+  } else {
+    fs.writeFileSync(path.join(configPath, keymapFile), generatedKeymap.code)
+  }
 
   return childProcess.execFile('git', ['status'], { cwd: zmkPath }, callback)
 }
