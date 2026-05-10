@@ -2,13 +2,13 @@ import ReactDOM from "react-dom"
 
 const styles = {
   wrapper: {
-    position: 'absolute',
+    position: 'fixed',
     top: '0',
     left: '0',
     width: '100vw',
     height: '100vh',
     backgroundColor: 'rgba(104, 123, 162, 0.39)',
-    zIndex: '50',
+    zIndex: '2100',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
