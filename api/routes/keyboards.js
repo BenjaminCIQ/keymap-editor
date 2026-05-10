@@ -11,6 +11,8 @@ router.post('/keymap', (req, res) => {
   const keymap = req.body
   const layout = zmk.loadLayout()
   const generatedKeymap = zmk.generateKeymap(layout, keymap)
+  // Include original keymap for in-place updates
+  generatedKeymap.keymap = keymap
   const exportStdout = zmk.exportKeymap(generatedKeymap, 'flash' in req.query, err => {
     if (err) {
       res.status(500).send(err)
