@@ -391,6 +391,7 @@
   },
   {
     "names": ["NUMBER_1", "N1"],
+    "symbol": "1",
     "description": "1 and ! [Exclamation]",
     "context": "Keyboard",
     "clarify": false,
@@ -406,6 +407,7 @@
   },
   {
     "names": ["EXCLAMATION", "EXCL"],
+    "symbol": "!",
     "description": "! [Exclamation]",
     "context": "Keyboard",
     "clarify": false,
@@ -421,6 +423,7 @@
   },
   {
     "names": ["NUMBER_2", "N2"],
+    "symbol": "2",
     "description": "2 and @ [At Sign]",
     "context": "Keyboard",
     "clarify": false,
@@ -436,6 +439,7 @@
   },
   {
     "names": ["AT_SIGN", "AT"],
+    "symbol": "@",
     "description": "@ [At Sign]",
     "context": "Keyboard",
     "clarify": false,
@@ -451,6 +455,7 @@
   },
   {
     "names": ["NUMBER_3", "N3"],
+    "symbol": "3",
     "description": "3 and # [Hash / Pound]",
     "context": "Keyboard",
     "clarify": false,
@@ -466,6 +471,7 @@
   },
   {
     "names": ["HASH", "POUND"],
+    "symbol": "#",
     "description": "# [Hash / Pound]",
     "context": "Keyboard",
     "clarify": false,
@@ -481,6 +487,7 @@
   },
   {
     "names": ["NUMBER_4", "N4"],
+    "symbol": "4",
     "description": "4 and $ [Dollar]",
     "context": "Keyboard",
     "clarify": false,
@@ -496,6 +503,7 @@
   },
   {
     "names": ["DOLLAR", "DLLR"],
+    "symbol": "$",
     "description": "$ [Dollar]",
     "context": "Keyboard",
     "clarify": false,
@@ -511,6 +519,7 @@
   },
   {
     "names": ["NUMBER_5", "N5"],
+    "symbol": "5",
     "description": "5 and % [Percent]",
     "context": "Keyboard",
     "clarify": false,
@@ -526,6 +535,7 @@
   },
   {
     "names": ["PERCENT", "PRCNT"],
+    "symbol": "%",
     "description": "% [Percent]",
     "context": "Keyboard",
     "clarify": false,
@@ -541,6 +551,7 @@
   },
   {
     "names": ["NUMBER_6", "N6"],
+    "symbol": "6",
     "description": "6 and ^ [Caret]",
     "context": "Keyboard",
     "clarify": false,
@@ -556,6 +567,7 @@
   },
   {
     "names": ["CARET"],
+    "symbol": "^",
     "description": "^ [Caret]",
     "context": "Keyboard",
     "clarify": false,
@@ -571,6 +583,7 @@
   },
   {
     "names": ["NUMBER_7", "N7"],
+    "symbol": "7",
     "description": "7 and & [Ampersand]",
     "context": "Keyboard",
     "clarify": false,
@@ -586,6 +599,7 @@
   },
   {
     "names": ["AMPERSAND", "AMPS"],
+    "symbol": "&",
     "description": "& [Ampersand]",
     "context": "Keyboard",
     "clarify": false,
@@ -601,6 +615,7 @@
   },
   {
     "names": ["NUMBER_8", "N8"],
+    "symbol": "8",
     "description": "8 and * [Asterisk / Star]",
     "context": "Keyboard",
     "clarify": false,
@@ -616,6 +631,7 @@
   },
   {
     "names": ["ASTERISK", "ASTRK", "STAR"],
+    "symbol": "*",
     "description": "* [Asterisk / Star]",
     "context": "Keyboard",
     "clarify": false,
@@ -631,6 +647,7 @@
   },
   {
     "names": ["NUMBER_9", "N9"],
+    "symbol": "9",
     "description": "9 and ( [Left Parenthesis]",
     "context": "Keyboard",
     "clarify": false,
@@ -662,6 +679,7 @@
   },
   {
     "names": ["NUMBER_0", "N0"],
+    "symbol": "0",
     "description": "0 and ) [Right Parenthesis]",
     "context": "Keyboard",
     "clarify": false,
@@ -709,6 +727,7 @@
   },
   {
     "names": ["ESCAPE", "ESC"],
+    "symbol": "⎋",
     "description": "Escape",
     "context": "Keyboard",
     "clarify": false,
@@ -724,6 +743,7 @@
   },
   {
     "names": ["BACKSPACE", "BSPC"],
+    "symbol": "⌫",
     "description": "Backspace",
     "context": "Keyboard",
     "clarify": false,
@@ -739,6 +759,7 @@
   },
   {
     "names": ["TAB"],
+    "symbol": "⇥",
     "description": "Tab",
     "context": "Keyboard",
     "clarify": false,
@@ -770,6 +791,7 @@
   },
   {
     "names": ["MINUS"],
+    "symbol": "-",
     "description": "- [Minus] and _ [Underscore]",
     "context": "Keyboard",
     "clarify": false,
@@ -785,6 +807,7 @@
   },
   {
     "names": ["UNDERSCORE", "UNDER"],
+    "symbol": "_",
     "description": "_ [Underscore]",
     "context": "Keyboard",
     "clarify": false,
@@ -800,6 +823,7 @@
   },
   {
     "names": ["EQUAL"],
+    "symbol": "=",
     "description": "= [Equal] and + [Plus]",
     "context": "Keyboard",
     "clarify": false,
@@ -815,6 +839,7 @@
   },
   {
     "names": ["PLUS"],
+    "symbol": "+",
     "description": "+ [Plus]",
     "context": "Keyboard",
     "clarify": false,
@@ -910,6 +935,7 @@
   },
   {
     "names": ["PIPE"],
+    "symbol": "|",
     "description": "| [Pipe]",
     "context": "Keyboard",
     "clarify": false,
@@ -971,6 +997,7 @@
   },
   {
     "names": ["COLON"],
+    "symbol": ":",
     "description": ": [Colon]",
     "context": "Keyboard",
     "clarify": false,
@@ -1018,6 +1045,7 @@
   },
   {
     "names": ["GRAVE"],
+    "symbol": "`",
     "description": "` [Grave Accent] and ~ [Tilde]",
     "context": "Keyboard",
     "clarify": false,
@@ -1033,6 +1061,7 @@
   },
   {
     "names": ["TILDE"],
+    "symbol": "~",
     "description": "~ [Tilde]",
     "context": "Keyboard",
     "clarify": false,
@@ -1064,6 +1093,7 @@
   },
   {
     "names": ["LESS_THAN", "LT"],
+    "symbol": "<",
     "description": "< [Less Than]",
     "context": "Keyboard",
     "clarify": false,
@@ -1383,6 +1413,7 @@
   },
   {
     "names": ["INSERT", "INS"],
+    "symbol": "⎀",
     "description": "Insert",
     "context": "Keyboard",
     "clarify": false,
@@ -1398,6 +1429,7 @@
   },
   {
     "names": ["HOME"],
+    "symbol": "⇱",
     "description": "Home",
     "context": "Keyboard",
     "clarify": false,
@@ -1413,6 +1445,7 @@
   },
   {
     "names": ["PAGE_UP", "PG_UP"],
+    "symbol": "⇞",
     "description": "Page Up",
     "context": "Keyboard",
     "clarify": false,
@@ -1428,6 +1461,7 @@
   },
   {
     "names": ["DELETE", "DEL"],
+    "symbol": "⌦",
     "description": "Delete",
     "context": "Keyboard",
     "clarify": false,
@@ -1443,6 +1477,7 @@
   },
   {
     "names": ["END"],
+    "symbol": "⇲",
     "description": "End",
     "context": "Keyboard",
     "clarify": false,
@@ -1458,6 +1493,7 @@
   },
   {
     "names": ["PAGE_DOWN", "PG_DN"],
+    "symbol": "⇟",
     "description": "Page Down",
     "context": "Keyboard",
     "clarify": false,
@@ -2173,6 +2209,7 @@
   },
   {
     "names": ["K_CUT"],
+    "symbol": "✂",
     "description": "Cut",
     "context": "Keyboard",
     "clarify": true,
@@ -2188,6 +2225,7 @@
   },
   {
     "names": ["K_COPY"],
+    "symbol": "⧉",
     "description": "Copy",
     "context": "Keyboard",
     "clarify": true,
@@ -2203,6 +2241,7 @@
   },
   {
     "names": ["K_PASTE"],
+    "symbol": "📋",
     "description": "Paste",
     "context": "Keyboard",
     "clarify": true,
@@ -2849,6 +2888,7 @@
   },
   {
     "names": ["LEFT_CONTROL", "LCTRL", "LC(code)"],
+    "symbol": "⌃",
     "description": "Left Control",
     "context": "Keyboard",
     "clarify": false,
@@ -2922,6 +2962,7 @@
   },
   {
     "names": ["RIGHT_CONTROL", "RCTRL", "RC(code)"],
+    "symbol": "⌃",
     "description": "Right Control",
     "context": "Keyboard",
     "clarify": false,
@@ -4138,6 +4179,7 @@
   },
   {
     "names": ["C_NEXT"],
+    "symbol": "⏭",
     "description": "Next",
     "context": "Consumer",
     "clarify": true,
@@ -4153,6 +4195,7 @@
   },
   {
     "names": ["C_PREVIOUS", "C_PREV"],
+    "symbol": "⏮",
     "description": "Previous",
     "context": "Consumer",
     "clarify": true,
@@ -4258,6 +4301,7 @@
   },
   {
     "names": ["C_PLAY_PAUSE", "C_PP"],
+    "symbol": "⏯",
     "description": "Play / Pause",
     "context": "Consumer",
     "clarify": true,
@@ -4288,6 +4332,7 @@
   },
   {
     "names": ["C_MUTE"],
+    "symbol": "🔇",
     "description": "Mute",
     "context": "Consumer",
     "clarify": true,
@@ -4318,6 +4363,7 @@
   },
   {
     "names": ["C_VOLUME_UP", "C_VOL_UP"],
+    "symbol": "🔊",
     "faIcon": "volume-up",
     "description": "Volume Up",
     "context": "Consumer",
@@ -4334,6 +4380,7 @@
   },
   {
     "names": ["C_VOLUME_DOWN", "C_VOL_DN"],
+    "symbol": "🔉",
     "faIcon": "volume-down",
     "description": "Volume Down",
     "context": "Consumer",
@@ -5055,6 +5102,7 @@
   },
   {
     "names": ["C_AC_COPY"],
+    "symbol": "⧉",
     "description": "Copy",
     "context": "Consumer AC",
     "clarify": true,
@@ -5070,6 +5118,7 @@
   },
   {
     "names": ["C_AC_CUT"],
+    "symbol": "✂",
     "description": "Cut",
     "context": "Consumer AC",
     "clarify": true,
@@ -5085,6 +5134,7 @@
   },
   {
     "names": ["C_AC_PASTE"],
+    "symbol": "📋",
     "description": "Paste",
     "context": "Consumer AC",
     "clarify": true,
@@ -5546,6 +5596,110 @@
       "macos": null,
       "ios": null
     },
+    "footnotes": {}
+  },
+  {
+    "names": ["MB1", "LCLK"],
+    "description": "Left Click",
+    "context": "Mouse Button",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MB2", "RCLK"],
+    "description": "Right Click",
+    "context": "Mouse Button",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MB3", "MCLK"],
+    "description": "Middle Click",
+    "context": "Mouse Button",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MB4"],
+    "description": "Mouse Button 4",
+    "context": "Mouse Button",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MB5"],
+    "description": "Mouse Button 5",
+    "context": "Mouse Button",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MOVE_UP"],
+    "description": "Move Up",
+    "context": "Mouse Move",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MOVE_DOWN"],
+    "description": "Move Down",
+    "context": "Mouse Move",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MOVE_LEFT"],
+    "description": "Move Left",
+    "context": "Mouse Move",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["MOVE_RIGHT"],
+    "description": "Move Right",
+    "context": "Mouse Move",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["SCRL_UP", "SCROLL_UP"],
+    "description": "Scroll Up",
+    "context": "Mouse Scroll",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["SCRL_DOWN", "SCROLL_DOWN"],
+    "description": "Scroll Down",
+    "context": "Mouse Scroll",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["SCRL_LEFT", "SCROLL_LEFT"],
+    "description": "Scroll Left",
+    "context": "Mouse Scroll",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
+    "footnotes": {}
+  },
+  {
+    "names": ["SCRL_RIGHT", "SCROLL_RIGHT"],
+    "description": "Scroll Right",
+    "context": "Mouse Scroll",
+    "clarify": false,
+    "os": { "windows": true, "linux": true, "macos": true },
     "footnotes": {}
   }
 ]
