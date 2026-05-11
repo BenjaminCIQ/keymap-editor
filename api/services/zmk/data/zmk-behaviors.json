@@ -105,6 +105,100 @@
     "params": []
   },
   {
+    "code": "&dm",
+    "name": "Dynamic Macro",
+    "description": "Record, stop, delete, inspect, or play a dynamic macro slot",
+    "includes": [
+      "#include <dt-bindings/zmk/dynamic_macros.h>",
+      "#include <behaviors/dynamic_macro.dtsi>"
+    ],
+    "params": [
+      "command"
+    ],
+    "commands": [
+      {
+        "code": "DM_REC",
+        "description": "Start recording a dynamic macro",
+        "additionalParams": [
+          {
+            "name": "argument",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "code": "DM_STP",
+        "description": "Stop recording and enter slot assignment mode",
+        "additionalParams": [
+          {
+            "name": "argument",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "code": "DM_DEL",
+        "description": "Enter delete mode for the next selected slot",
+        "additionalParams": [
+          {
+            "name": "argument",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "code": "DM_STATE",
+        "description": "Output the current dynamic macro slot state",
+        "additionalParams": [
+          {
+            "name": "argument",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "code": "DM_SLOT",
+        "description": "Play, assign, or delete a dynamic macro slot",
+        "additionalParams": [
+          {
+            "name": "slot",
+            "type": "integer",
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "code": "&kp",
     "name": "Key Press",
     "params": [
