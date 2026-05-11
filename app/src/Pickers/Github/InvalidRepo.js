@@ -3,7 +3,6 @@ import DialogBox from "../../Common/DialogBox"
 
 export default function InvalidRepo(props) {
   const { onDismiss, otherRepoOrBranchAvailable = false } = props
-  const demoRepoUrl = 'https://github.com/nickcoutsos/zmk-config-corne-demo/'
 
   return (
     <Modal>
@@ -15,9 +14,8 @@ export default function InvalidRepo(props) {
         </p>
         <p>
           This app depends on some additional metadata to render the keymap.
-          For an example repository ready to use now or metadata you can apply
-          to your own keyboard repo, have a look at
-          <a href={demoRepoUrl}>zmk-config-corne-demo</a>.
+          Add the required metadata to your keyboard repo, then try loading it
+          again.
         </p>
         {otherRepoOrBranchAvailable && (
           <p>

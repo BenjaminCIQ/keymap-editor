@@ -10,7 +10,6 @@ import { loadBehaviours } from './api'
 import KeyboardPicker from './Pickers/KeyboardPicker';
 import Spinner from './Common/Spinner';
 import Keyboard from './Keyboard/Keyboard'
-import GitHubLink from './GitHubLink'
 import Loader from './Common/Loader'
 import github from './Pickers/Github/api'
 
@@ -125,7 +124,6 @@ function App() {
           )}
         </DefinitionsContext.Provider>
       </Loader>
-      <GitHubLink className="github-link" />
     </>
   );
 }
