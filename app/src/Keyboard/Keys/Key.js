@@ -7,6 +7,7 @@ import { getBehaviourParams } from '../../keymap'
 import { getKeyStyles } from '../../key-units'
 
 import KeyParamlist from './KeyParamlist'
+import { getDynamicMacroLabel, getDynamicMacroTitle } from './dynamicMacro'
 import * as keyPropTypes from './keyPropTypes'
 import {
   hydrateTree,
@@ -68,6 +69,8 @@ function Key(props) {
             {getShiftedSymbol(normalized.params[0].source.symbol || normalized.params[0].value)}
           </span>
         </span>
+      ) : behaviour?.code === '&dm' ? (
+        <DynamicMacroValue params={params} />
       ) : (
         <KeyParamlist
           root={true}
@@ -80,6 +83,28 @@ function Key(props) {
     </span>
   </div>
   )
+}
+
+function DynamicMacroValue(props) {
+  const { params } = props
+
+  return (
+    <span
+      className={styles.params}
+      data-is-root={true}
+      data-param-count={params?.length || 0}
+    >
+      <span className={styles.param}>
+        <span className={styles.code} title={getDynamicMacroTitle(params)}>
+          {getDynamicMacroLabel(params)}
+        </span>
+      </span>
+    </span>
+  )
+}
+
+DynamicMacroValue.propTypes = {
+  params: PropTypes.arrayOf(keyPropTypes.node)
 }
 
 Key.propTypes = {

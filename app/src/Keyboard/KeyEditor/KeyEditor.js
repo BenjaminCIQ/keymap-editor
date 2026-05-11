@@ -4,6 +4,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { SearchContext } from '../../providers'
 import { getBehaviourParams } from '../../keymap'
 import Icon from '../../Common/Icon'
+import { getDynamicMacroLabel } from '../Keys/dynamicMacro'
 import ComboSettings from './ComboSettings'
 import styles from './styles.module.css'
 
@@ -328,6 +329,10 @@ function resolveBindingToKeycode(bindingStr, sources, depth = 0) {
 function getDisplayValue(binding, sources, behaviour) {
   if (!binding || !binding.params || binding.params.length === 0) {
     return binding?.value?.replace(/^&/, '') || '?'
+  }
+
+  if (behaviour?.code === '&dm') {
+    return getDynamicMacroLabel(binding.params)
   }
 
   // For custom hold-tap with internal tap binding, resolve it first
