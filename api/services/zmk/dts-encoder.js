@@ -119,7 +119,7 @@ function updateCombosInFile(filePath, newCombos) {
 
   if (combosRegex.test(content)) {
     const newCombosSection = encodeCombos(newCombos)
-    return content.replace(combosRegex, '\n' + newCombosSection)
+    return content.replace(combosRegex, newCombosSection)
   } else {
     // Insert combos section after "/ {"
     const rootRegex = /(\/\s*\{)/

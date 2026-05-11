@@ -284,7 +284,7 @@ function updateKeymapCombos(filePath, newCombos) {
     )
     if (compatProp) {
       const insertPos = compatProp.endIndex
-      const newCombosText = '\n\n' + newCombos.map(c => encodeCombo(c)).join('\n\n')
+      const newCombosText = '\n' + newCombos.map(c => encodeCombo(c)).join('\n\n')
       return source.slice(0, insertPos) + newCombosText + source.slice(insertPos)
     }
     return source
