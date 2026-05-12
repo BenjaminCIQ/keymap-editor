@@ -16,6 +16,7 @@ const keymapTemplate = `
 {{behaviour_includes}}
 
 / {
+{{rendered_combos}}
     keymap {
         compatible = "zmk,keymap";
 

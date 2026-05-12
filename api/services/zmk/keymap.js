@@ -8,6 +8,7 @@ const map = require('lodash/map')
 const uniq = require('lodash/uniq')
 
 const { renderTable } = require('./layout')
+const { encodeCombos } = require('./dts-encoder')
 const defaults = require('./defaults')
 
 class KeymapValidationError extends Error {
@@ -88,7 +89,12 @@ function generateKeymap (layout, keymap, template) {
 
 function renderTemplate(template, params) {
   const includesPattern = /\{\{\s*behaviour_includes\s*\}\}/
+  const combosPattern = /\{\{\s*rendered_combos\s*\}\}/
+  const hasCombosPlaceholder = combosPattern.test(template)
   const layersPattern = /\{\{\s*rendered_layers\s*\}\}/
+  const renderedCombos = params.combos && params.combos.length > 0
+    ? `${encodeCombos(params.combos)}\n\n`
+    : ''
 
   const renderedLayers = params.layers.map((layer, i) => {
     const name = i === 0 ? 'default_layer' : `layer_${params.layerNames[i] || i}`
@@ -106,9 +112,16 @@ ${rendered}
 `
   })
 
-  return template
+  const renderedTemplate = template
     .replace(includesPattern, params.behaviourHeaders.join('\n'))
+    .replace(combosPattern, renderedCombos)
     .replace(layersPattern, renderedLayers.join(''))
+
+  if (renderedCombos && !hasCombosPlaceholder) {
+    return renderedTemplate.replace(/(\/\s*\{\s*)/, `$1${renderedCombos}`)
+  }
+
+  return renderedTemplate
 }
 
 function generateKeymapCode (layout, keymap, encoded, template) {
@@ -120,6 +133,7 @@ function generateKeymapCode (layout, keymap, encoded, template) {
   return renderTemplate(template, {
     layout,
     behaviourHeaders,
+    combos: keymap.combos || [],
     layers: encoded.layers,
     layerNames: names
   })
