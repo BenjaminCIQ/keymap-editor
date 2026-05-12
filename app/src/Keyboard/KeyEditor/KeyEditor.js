@@ -360,6 +360,19 @@ function formatParam(param, sources, paramDef, behaviour, paramIndex) {
 
   const paramValue = typeof param === 'object' ? param.value : param
 
+  if (paramDef?.enum) {
+    const enumChoice = paramDef.enum.find(choice => {
+      const choiceCode = typeof choice === 'object' ? choice.code : choice
+      return String(choiceCode) === String(paramValue)
+    })
+    if (enumChoice) {
+      if (typeof enumChoice === 'object') {
+        return `${enumChoice.code} | ${enumChoice.description || enumChoice.name || enumChoice.code}`
+      }
+      return String(enumChoice)
+    }
+  }
+
   // For hold-tap hold param (index 0), resolve from holdBinding if available
   if (paramIndex === 0 && behaviour?.holdBinding) {
     const resolved = resolveBindingToKeycode(behaviour.holdBinding, sources)

@@ -12,7 +12,7 @@ function getParamValue(param) {
   return typeof param === 'object' ? param?.value : param
 }
 
-function getSlotLabel(slot) {
+function getGlobalSlotLabel(slot) {
   if (slot === undefined || slot === null) return '?'
 
   const slotNumber = Number(slot)
@@ -23,12 +23,33 @@ function getSlotLabel(slot) {
   return `${prefix}${slot}`
 }
 
+function getNvsSlotLabel(slot) {
+  return slot === undefined || slot === null ? 'N?' : `N${slot}`
+}
+
+function getRamSlotLabel(slot) {
+  if (slot === undefined || slot === null) return 'R?'
+
+  const slotNumber = Number(slot)
+  const displayedSlot = Number.isFinite(slotNumber)
+    ? slotNumber + DEFAULT_NVS_SLOT_COUNT
+    : slot
+
+  return `R${displayedSlot}`
+}
+
 export function getDynamicMacroLabel(params = []) {
   const command = getParamValue(params[0])
   const argument = getParamValue(params[1])
 
   if (command === 'DM_SLOT') {
-    return getSlotLabel(argument)
+    return getGlobalSlotLabel(argument)
+  }
+  if (command === 'DM_SLOT_NVS') {
+    return getNvsSlotLabel(argument)
+  }
+  if (command === 'DM_SLOT_RAM') {
+    return getRamSlotLabel(argument)
   }
 
   return COMMAND_LABELS[command] || command?.replace(/^DM_/, '') || 'DM'
@@ -39,7 +60,9 @@ export function getDynamicMacroTitle(params = []) {
   const argument = getParamValue(params[1])
 
   if (!command) return 'Dynamic Macro'
-  if (command === 'DM_SLOT') return `Dynamic Macro slot ${getSlotLabel(argument)}`
+  if (command === 'DM_SLOT') return `Dynamic Macro slot ${getGlobalSlotLabel(argument)}`
+  if (command === 'DM_SLOT_NVS') return `Dynamic Macro NVS slot ${getNvsSlotLabel(argument)}`
+  if (command === 'DM_SLOT_RAM') return `Dynamic Macro RAM slot ${getRamSlotLabel(argument)}`
 
   return `Dynamic Macro ${getDynamicMacroLabel(params)}`
 }

@@ -182,8 +182,352 @@
         ]
       },
       {
+        "code": "DM_SLOT_NVS",
+        "description": "Use an NVS-backed dynamic macro slot",
+        "additionalParams": [
+          {
+            "name": "NVS slot",
+            "type": "integer",
+            "enum": [
+              {
+                "code": 0,
+                "name": "N0",
+                "description": "NVS slot 0"
+              },
+              {
+                "code": 1,
+                "name": "N1",
+                "description": "NVS slot 1"
+              },
+              {
+                "code": 2,
+                "name": "N2",
+                "description": "NVS slot 2"
+              },
+              {
+                "code": 3,
+                "name": "N3",
+                "description": "NVS slot 3"
+              },
+              {
+                "code": 4,
+                "name": "N4",
+                "description": "NVS slot 4"
+              },
+              {
+                "code": 5,
+                "name": "N5",
+                "description": "NVS slot 5"
+              },
+              {
+                "code": 6,
+                "name": "N6",
+                "description": "NVS slot 6"
+              },
+              {
+                "code": 7,
+                "name": "N7",
+                "description": "NVS slot 7"
+              },
+              {
+                "code": 8,
+                "name": "N8",
+                "description": "NVS slot 8"
+              },
+              {
+                "code": 9,
+                "name": "N9",
+                "description": "NVS slot 9"
+              },
+              {
+                "code": 10,
+                "name": "N10",
+                "description": "NVS slot 10"
+              },
+              {
+                "code": 11,
+                "name": "N11",
+                "description": "NVS slot 11"
+              },
+              {
+                "code": 12,
+                "name": "N12",
+                "description": "NVS slot 12"
+              },
+              {
+                "code": 13,
+                "name": "N13",
+                "description": "NVS slot 13"
+              },
+              {
+                "code": 14,
+                "name": "N14",
+                "description": "NVS slot 14"
+              },
+              {
+                "code": 15,
+                "name": "N15",
+                "description": "NVS slot 15"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "code": "DM_SLOT_RAM",
+        "description": "Use a RAM-only dynamic macro slot",
+        "additionalParams": [
+          {
+            "name": "RAM slot",
+            "type": "integer",
+            "enum": [
+              {
+                "code": 0,
+                "name": "RAM 0",
+                "description": "RAM slot 0 (R8 with default split)"
+              },
+              {
+                "code": 1,
+                "name": "RAM 1",
+                "description": "RAM slot 1 (R9 with default split)"
+              },
+              {
+                "code": 2,
+                "name": "RAM 2",
+                "description": "RAM slot 2 (R10 with default split)"
+              },
+              {
+                "code": 3,
+                "name": "RAM 3",
+                "description": "RAM slot 3 (R11 with default split)"
+              },
+              {
+                "code": 4,
+                "name": "RAM 4",
+                "description": "RAM slot 4 (R12 with default split)"
+              },
+              {
+                "code": 5,
+                "name": "RAM 5",
+                "description": "RAM slot 5 (R13 with default split)"
+              },
+              {
+                "code": 6,
+                "name": "RAM 6",
+                "description": "RAM slot 6 (R14 with default split)"
+              },
+              {
+                "code": 7,
+                "name": "RAM 7",
+                "description": "RAM slot 7 (R15 with default split)"
+              },
+              {
+                "code": 8,
+                "name": "RAM 8",
+                "description": "RAM slot 8"
+              },
+              {
+                "code": 9,
+                "name": "RAM 9",
+                "description": "RAM slot 9"
+              },
+              {
+                "code": 10,
+                "name": "RAM 10",
+                "description": "RAM slot 10"
+              },
+              {
+                "code": 11,
+                "name": "RAM 11",
+                "description": "RAM slot 11"
+              },
+              {
+                "code": 12,
+                "name": "RAM 12",
+                "description": "RAM slot 12"
+              },
+              {
+                "code": 13,
+                "name": "RAM 13",
+                "description": "RAM slot 13"
+              },
+              {
+                "code": 14,
+                "name": "RAM 14",
+                "description": "RAM slot 14"
+              },
+              {
+                "code": 15,
+                "name": "RAM 15",
+                "description": "RAM slot 15"
+              },
+              {
+                "code": 16,
+                "name": "RAM 16",
+                "description": "RAM slot 16"
+              },
+              {
+                "code": 17,
+                "name": "RAM 17",
+                "description": "RAM slot 17"
+              },
+              {
+                "code": 18,
+                "name": "RAM 18",
+                "description": "RAM slot 18"
+              },
+              {
+                "code": 19,
+                "name": "RAM 19",
+                "description": "RAM slot 19"
+              },
+              {
+                "code": 20,
+                "name": "RAM 20",
+                "description": "RAM slot 20"
+              },
+              {
+                "code": 21,
+                "name": "RAM 21",
+                "description": "RAM slot 21"
+              },
+              {
+                "code": 22,
+                "name": "RAM 22",
+                "description": "RAM slot 22"
+              },
+              {
+                "code": 23,
+                "name": "RAM 23",
+                "description": "RAM slot 23"
+              },
+              {
+                "code": 24,
+                "name": "RAM 24",
+                "description": "RAM slot 24"
+              },
+              {
+                "code": 25,
+                "name": "RAM 25",
+                "description": "RAM slot 25"
+              },
+              {
+                "code": 26,
+                "name": "RAM 26",
+                "description": "RAM slot 26"
+              },
+              {
+                "code": 27,
+                "name": "RAM 27",
+                "description": "RAM slot 27"
+              },
+              {
+                "code": 28,
+                "name": "RAM 28",
+                "description": "RAM slot 28"
+              },
+              {
+                "code": 29,
+                "name": "RAM 29",
+                "description": "RAM slot 29"
+              },
+              {
+                "code": 30,
+                "name": "RAM 30",
+                "description": "RAM slot 30"
+              },
+              {
+                "code": 31,
+                "name": "RAM 31",
+                "description": "RAM slot 31"
+              },
+              {
+                "code": 32,
+                "name": "RAM 32",
+                "description": "RAM slot 32"
+              },
+              {
+                "code": 33,
+                "name": "RAM 33",
+                "description": "RAM slot 33"
+              },
+              {
+                "code": 34,
+                "name": "RAM 34",
+                "description": "RAM slot 34"
+              },
+              {
+                "code": 35,
+                "name": "RAM 35",
+                "description": "RAM slot 35"
+              },
+              {
+                "code": 36,
+                "name": "RAM 36",
+                "description": "RAM slot 36"
+              },
+              {
+                "code": 37,
+                "name": "RAM 37",
+                "description": "RAM slot 37"
+              },
+              {
+                "code": 38,
+                "name": "RAM 38",
+                "description": "RAM slot 38"
+              },
+              {
+                "code": 39,
+                "name": "RAM 39",
+                "description": "RAM slot 39"
+              },
+              {
+                "code": 40,
+                "name": "RAM 40",
+                "description": "RAM slot 40"
+              },
+              {
+                "code": 41,
+                "name": "RAM 41",
+                "description": "RAM slot 41"
+              },
+              {
+                "code": 42,
+                "name": "RAM 42",
+                "description": "RAM slot 42"
+              },
+              {
+                "code": 43,
+                "name": "RAM 43",
+                "description": "RAM slot 43"
+              },
+              {
+                "code": 44,
+                "name": "RAM 44",
+                "description": "RAM slot 44"
+              },
+              {
+                "code": 45,
+                "name": "RAM 45",
+                "description": "RAM slot 45"
+              },
+              {
+                "code": 46,
+                "name": "RAM 46",
+                "description": "RAM slot 46"
+              },
+              {
+                "code": 47,
+                "name": "RAM 47",
+                "description": "RAM slot 47"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "code": "DM_SLOT",
-        "description": "Play, assign, delete, move-select, or chain a dynamic macro slot",
+        "description": "Legacy unified dynamic macro slot index",
         "additionalParams": [
           {
             "name": "slot",

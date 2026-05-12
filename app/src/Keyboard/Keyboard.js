@@ -60,7 +60,7 @@ function Keyboard(props) {
     // parameter that isn't defined at the root level of the behaviour.
     // Currently this is just `&bt BT_SEL` and is only represented as an enum.
     if (param.enum) {
-      return param.enum.map(v => ({ code: v }))
+      return param.enum.map(v => typeof v === 'object' ? v : { code: v })
     }
 
     if (param === 'command') {
