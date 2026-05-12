@@ -284,42 +284,42 @@
               {
                 "code": 0,
                 "name": "RAM 0",
-                "description": "RAM slot 0 (R8 with default split)"
+                "description": "RAM slot 0"
               },
               {
                 "code": 1,
                 "name": "RAM 1",
-                "description": "RAM slot 1 (R9 with default split)"
+                "description": "RAM slot 1"
               },
               {
                 "code": 2,
                 "name": "RAM 2",
-                "description": "RAM slot 2 (R10 with default split)"
+                "description": "RAM slot 2"
               },
               {
                 "code": 3,
                 "name": "RAM 3",
-                "description": "RAM slot 3 (R11 with default split)"
+                "description": "RAM slot 3"
               },
               {
                 "code": 4,
                 "name": "RAM 4",
-                "description": "RAM slot 4 (R12 with default split)"
+                "description": "RAM slot 4"
               },
               {
                 "code": 5,
                 "name": "RAM 5",
-                "description": "RAM slot 5 (R13 with default split)"
+                "description": "RAM slot 5"
               },
               {
                 "code": 6,
                 "name": "RAM 6",
-                "description": "RAM slot 6 (R14 with default split)"
+                "description": "RAM slot 6"
               },
               {
                 "code": 7,
                 "name": "RAM 7",
-                "description": "RAM slot 7 (R15 with default split)"
+                "description": "RAM slot 7"
               },
               {
                 "code": 8,

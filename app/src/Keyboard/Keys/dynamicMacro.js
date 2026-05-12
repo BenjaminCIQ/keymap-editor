@@ -28,14 +28,7 @@ function getNvsSlotLabel(slot) {
 }
 
 function getRamSlotLabel(slot) {
-  if (slot === undefined || slot === null) return 'R?'
-
-  const slotNumber = Number(slot)
-  const displayedSlot = Number.isFinite(slotNumber)
-    ? slotNumber + DEFAULT_NVS_SLOT_COUNT
-    : slot
-
-  return `R${displayedSlot}`
+  return slot === undefined || slot === null ? 'R?' : `R${slot}`
 }
 
 export function getDynamicMacroLabel(params = []) {
